@@ -1,12 +1,14 @@
 import pytest
 
 from database import Database
+import models
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def database():
     database = Database(':memory:')
     yield database
+    database.db.close()
 
 
 def test_existing_tables(database):
@@ -51,3 +53,22 @@ def test_reopen_connection(database):
     assert database.db.is_closed() == True
     database.open_connection()
     assert database.db.is_closed() == False
+
+
+def test_drop_table(database):
+    database.drop_table(models.Picture)
+    database.drop_table(models.Street)
+    assert 'picture' not in database.db.get_tables()
+    assert 'street' not in database.db.get_tables()
+
+
+def test_add_database_field(database):
+    database.add_database_field(models.Registered, 'registered', 'new_field', models.CharField(null=True))
+    assert database.check_if_column_exist('registered', 'new_field') == True
+    assert database.check_if_column_exist('not_existing_table', 'not_existing_column') == False
+
+
+def test_check_if_column_exist(database):
+    assert database.check_if_column_exist('person', 'gender') == True
+    assert database.check_if_column_exist('street', 'number') == True
+    assert database.check_if_column_exist('test', 'test') == False
