@@ -81,7 +81,7 @@ class Registered(BaseModel):
 class Id(BaseModel):
     person = ForeignKeyField(Person)
     name = CharField()
-    value = CharField()
+    value = CharField(null=True)
 
 
 class Picture(BaseModel):
