@@ -1,8 +1,12 @@
 from peewee import *
 
-
 # Defer initialization
-db = SqliteDatabase(None)
+# Pragma statements to increase performance of the database
+db = SqliteDatabase(None, pragmas={
+    'journal_mode': 'wal',
+    'synchronous': 0,
+    'locking_mode': 'EXCLUSIVE'
+})
 
 
 class BaseModel(Model):
