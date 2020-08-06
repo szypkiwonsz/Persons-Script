@@ -18,6 +18,7 @@ class DataLoader(Database):
         self.data = data
         self.add_database_field(models.Dob, 'dob', 'days_to_birthday', models.IntegerField(null=True))
         self.add_days_to_birthday_to_data()
+        self.add_cleaned_phone_number_to_data()
 
     def add_days_to_birthday_to_data(self):
         new_list = []
@@ -51,6 +52,19 @@ class DataLoader(Database):
     def day_not_exist(year, month, day):
         if not calendar.isleap(year) and month == 2 and day == 29:
             return True
+
+    def add_cleaned_phone_number_to_data(self):
+        new_list = []
+        for person in self.data:
+            person['phone'] = self.clean_string_to_number(person['phone'])
+            person['cell'] = self.clean_string_to_number(person['cell'])
+            new_list.append(person)
+        self.data = new_list
+        return new_list
+
+    @staticmethod
+    def clean_string_to_number(string):
+        return int(''.join(i for i in string if i.isdigit()))
 
     def insert_to_database(self):
         with self.db.atomic():
