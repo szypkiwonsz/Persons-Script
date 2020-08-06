@@ -10,6 +10,9 @@ class DataLoader(Database):
         """
         Object that inserts data into the database
         Adds the field 'days_to_birthday' to the 'dob' table in the database
+        Adds the days until the person's birthday to the given data
+        Adds the cleaned up person's phone number to the given data
+        Deletes 'picture' table
 
         :param db_path: <string>, database path
         :param data: <list>, data to be inserted into the database
@@ -19,6 +22,7 @@ class DataLoader(Database):
         self.add_database_field(models.Dob, 'dob', 'days_to_birthday', models.IntegerField(null=True))
         self.add_days_to_birthday_to_data()
         self.add_cleaned_phone_number_to_data()
+        self.drop_table(models.Picture)
 
     def add_days_to_birthday_to_data(self):
         new_list = []
@@ -118,8 +122,3 @@ class DataLoader(Database):
                     person=person_obj, name=person['id']['name'], value=person['id']['value']
                 )
                 id_obj.save()
-                picture_obj = models.Picture(
-                    person=person_obj, large=person['picture']['large'], medium=person['picture']['medium'],
-                    thumbnail=person['picture']['thumbnail']
-                )
-                picture_obj.save()
