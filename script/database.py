@@ -1,3 +1,5 @@
+from playhouse.migrate import SqliteMigrator, migrate
+
 import models
 
 
@@ -11,6 +13,7 @@ class Database:
         self.db_path = db_path
         self.db = models.db
         self.models = models.MODELS
+        self.migrator = SqliteMigrator(self.db)
         self.initialize()
 
     def __del__(self):
@@ -32,3 +35,17 @@ class Database:
 
     def create_tables(self):
         self.db.create_tables(self.models)
+
+    def add_database_field(self, database_model, table_name, column_name, field):
+        # Handling peewee.OperationalError: duplicate column name
+        if not self.check_if_column_exist(table_name, column_name):
+            migrate(self.migrator.add_column(table_name, column_name, field))
+            database_model._meta.add_field(column_name, field)
+
+    def check_if_column_exist(self, table_name, column_name):
+        columns_meta_data = self.db.get_columns(table_name)
+        for i, data in enumerate(columns_meta_data):
+            retrieved_column_name = columns_meta_data[i][0]
+            if column_name == retrieved_column_name:
+                return True
+        return False
