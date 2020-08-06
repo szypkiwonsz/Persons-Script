@@ -36,6 +36,10 @@ class Database:
     def create_tables(self):
         self.db.create_tables(self.models)
 
+    @staticmethod
+    def drop_table(database_model):
+        database_model.drop_table()
+
     def add_database_field(self, database_model, table_name, column_name, field):
         # Handling peewee.OperationalError: duplicate column name
         if not self.check_if_column_exist(table_name, column_name):
