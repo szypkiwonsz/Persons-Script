@@ -6,12 +6,14 @@ class DataLoader(Database):
     def __init__(self, db_path, data):
         """
         Object that inserts data into the database
+        Adds the field 'days_to_birthday' to the 'dob' table in the database
 
         :param db_path: <string>, database path
         :param data: <list>, data to be inserted into the database
         """
         super().__init__(db_path)
         self.data = data
+        self.add_database_field(models.Dob, 'dob', 'days_to_birthday', models.IntegerField(null=True))
 
     def insert_to_database(self):
         with self.db.atomic():
