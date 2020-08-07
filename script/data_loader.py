@@ -69,7 +69,7 @@ class DataLoader(Database):
 
     @staticmethod
     def clean_string_to_number(string):
-        return int(''.join(i for i in str(string) if i.isdigit()))
+        return ''.join(i for i in str(string) if i.isdigit())
 
     def insert_to_database(self):
         with self.db.atomic():
