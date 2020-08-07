@@ -1,7 +1,7 @@
 import pytest
 
-from database import Database
 import models
+from database import Database
 
 
 @pytest.fixture()
@@ -56,9 +56,7 @@ def test_reopen_connection(database):
 
 
 def test_drop_table(database):
-    database.drop_table(models.Picture)
     database.drop_table(models.Street)
-    assert 'picture' not in database.db.get_tables()
     assert 'street' not in database.db.get_tables()
 
 
@@ -70,5 +68,4 @@ def test_add_database_field(database):
 
 def test_check_if_column_exist(database):
     assert database.check_if_column_exist('person', 'gender') == True
-    assert database.check_if_column_exist('street', 'number') == True
     assert database.check_if_column_exist('test', 'test') == False
