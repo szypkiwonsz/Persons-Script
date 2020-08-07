@@ -39,11 +39,12 @@ class DataLoader(Database):
         :param date_of_birth: <datetime.date>, date of birth of the person
         :return: <int>, days to a person's birthday
         """
-        today = datetime.today()
-        delta1 = datetime(today.year, date_of_birth.month, date_of_birth.day)
+        today = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
         if self.day_not_exist(today.year + 1, date_of_birth.month, date_of_birth.day):
+            delta1 = datetime(today.year, date_of_birth.month, date_of_birth.day - 1)
             delta2 = datetime(today.year + 1, date_of_birth.month, date_of_birth.day - 1)
         else:
+            delta1 = datetime(today.year, date_of_birth.month, date_of_birth.day)
             delta2 = datetime(today.year + 1, date_of_birth.month, date_of_birth.day)
         if (delta1 - today).days > 0:
             delta = delta1
