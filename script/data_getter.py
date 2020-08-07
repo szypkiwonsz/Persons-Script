@@ -1,4 +1,7 @@
 import json
+import sys
+
+import requests
 
 
 class DataFromFile:
@@ -17,4 +20,32 @@ class DataFromFile:
 
     def get_persons_data(self):
         data = self.get_json_data()
+        return data['results']
+
+
+class DataFromApi:
+    def __init__(self, api_url):
+        """
+        Object that gets data from api
+
+        :param api_url: <string>, url address
+        """
+        self.api_url = api_url
+
+    def get_json_data_from_api(self):
+        try:
+            response = requests.get(self.api_url, timeout=10)
+            # Handling: service temporarily unavailable error
+            if response.status_code == 503:
+                response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f'Oops! something unexpected happened. {e}. Try again.')
+            sys.exit()
+        except requests.exceptions.ConnectionError:
+            print('Oops! Connection Error. Make sure you are connected to Internet.')
+            sys.exit()
+        return response.json()
+
+    def get_persons_data(self):
+        data = self.get_json_data_from_api()
         return data['results']
