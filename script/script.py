@@ -21,8 +21,8 @@ if __name__ == '__main__':
     if not database_file_exist(DATABASE):
         file = DataFromFile(FILE)
         persons_data = file.get_persons_data()
-        data = DataLoader(DATABASE, persons_data)
-        data.insert_to_database()
+        loader = DataLoader(DATABASE, persons_data)
+        loader.insert_to_database()
 
     if not any(vars(args).values()):
         print('There are no arguments passed!')
