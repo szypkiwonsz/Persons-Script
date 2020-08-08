@@ -1,4 +1,3 @@
-import calendar
 from datetime import datetime
 
 import models
@@ -34,11 +33,6 @@ class DataLoader(Database):
             new_list.append(person)
         self.data = new_list
         return new_list
-
-    @staticmethod
-    def day_not_exist(year, month, day):
-        if not calendar.isleap(year) and month == 2 and day == 29:
-            return True
 
     def add_cleaned_phone_number_to_data(self):
         new_list = []
