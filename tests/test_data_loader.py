@@ -22,13 +22,17 @@ def test_add_days_to_birthday_to_data(loader):
 
 
 def test_calculate_days_to_birthday(loader):
+    today = datetime(datetime.today().year, datetime.today().month, datetime.today().day).date()
+    yesterday = datetime(datetime.today().year, datetime.today().month, datetime.today().day - 1).date()
+    tomorrow = datetime(datetime.today().year, datetime.today().month, datetime.today().day + 1).date()
     dates = [
-        '1998-01-03T06:20:06.940Z', '1998-12-01T06:20:06.940Z', '1996-02-29T06:20:06.940Z'
+        today, yesterday, tomorrow
     ]
-    correctly_days = [149, 116, 205]
+    correctly_days = [
+        365, 364, 1
+    ]
     for date, correctly_day in zip(dates, correctly_days):
-        date_of_birth = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z").date()
-        days_to_birthday = loader.calculate_days_to_birthday(date_of_birth)
+        days_to_birthday = loader.calculate_days_to_birthday(date)
         assert days_to_birthday == correctly_day
 
 
