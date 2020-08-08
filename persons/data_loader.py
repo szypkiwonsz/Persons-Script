@@ -1,8 +1,8 @@
-import calendar
 from datetime import datetime
 
 import models
 from database import Database
+from utils import calculate_days_to_birthday
 
 
 class DataLoader(Database):
@@ -28,35 +28,11 @@ class DataLoader(Database):
         new_list = []
         for person in self.data:
             date_of_birth = datetime.strptime(person['dob']['date'], "%Y-%m-%dT%H:%M:%S.%f%z").date()
-            days_to_birthday = self.calculate_days_to_birthday(date_of_birth)
+            days_to_birthday = calculate_days_to_birthday(date_of_birth)
             person['dob']['days_to_birthday'] = days_to_birthday
             new_list.append(person)
         self.data = new_list
         return new_list
-
-    def calculate_days_to_birthday(self, date_of_birth):
-        """
-        :param date_of_birth: <datetime.date>, date of birth of the person
-        :return: <int>, days to a person's birthday
-        """
-        today = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
-        if self.day_not_exist(today.year + 1, date_of_birth.month, date_of_birth.day):
-            delta1 = datetime(today.year, date_of_birth.month, date_of_birth.day - 1)
-            delta2 = datetime(today.year + 1, date_of_birth.month, date_of_birth.day - 1)
-        else:
-            delta1 = datetime(today.year, date_of_birth.month, date_of_birth.day)
-            delta2 = datetime(today.year + 1, date_of_birth.month, date_of_birth.day)
-        if (delta1 - today).days > 0:
-            delta = delta1
-        else:
-            delta = delta2
-        days = (delta - today).days
-        return days
-
-    @staticmethod
-    def day_not_exist(year, month, day):
-        if not calendar.isleap(year) and month == 2 and day == 29:
-            return True
 
     def add_cleaned_phone_number_to_data(self):
         new_list = []

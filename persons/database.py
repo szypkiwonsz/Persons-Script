@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from playhouse.migrate import SqliteMigrator, migrate
 
 import models
+from utils import calculate_days_to_birthday
 
 
 class Database:
@@ -15,6 +18,7 @@ class Database:
         self.models = models.MODELS
         self.migrator = SqliteMigrator(self.db)
         self.initialize()
+        self.update_days_to_birthday()
 
     def __del__(self):
         self.close_connection()
@@ -53,3 +57,12 @@ class Database:
             if column_name == retrieved_column_name:
                 return True
         return False
+
+    @staticmethod
+    def update_days_to_birthday():
+        # Each time we run the script, the days to a person's birthday are updated
+        query = models.Dob.select()
+        for person in query:
+            date_of_birth = datetime.strptime(person.date, "%Y-%m-%dT%H:%M:%S.%f%z").date()
+            days = calculate_days_to_birthday(date_of_birth)
+            models.db.execute_sql(f'UPDATE DOB SET days_to_birthday = {days} WHERE ID = {person.id}')
