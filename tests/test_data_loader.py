@@ -9,7 +9,7 @@ from data_loader import DataLoader
 
 @pytest.fixture()
 def loader():
-    file = DataFromFile('./script/persons.json')
+    file = DataFromFile('./persons.json')
     data = file.get_persons_data()
     loader = DataLoader(':memory:', data)
     return loader

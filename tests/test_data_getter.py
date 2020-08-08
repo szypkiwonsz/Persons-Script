@@ -5,7 +5,7 @@ from data_getter import DataFromFile
 
 @pytest.fixture()
 def file():
-    file = DataFromFile('./script/persons.json')
+    file = DataFromFile('./persons.json')
     return file
 
 
