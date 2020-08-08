@@ -11,11 +11,11 @@ class PercentagePeople(Database):
         """
         super().__init__(db_path)
 
-    def women_percentage(self):
-        return self.calculate_percentage(self.count_only_gender('female'), self.count_all_people())
-
-    def men_percentage(self):
-        return self.calculate_percentage(self.count_only_gender('male'), self.count_all_people())
+    def gender_percentage(self, gender):
+        try:
+            return self.calculate_percentage(self.count_only_gender(gender), self.count_all_people())
+        except ValueError:
+            return 0
 
     @staticmethod
     def count_only_gender(gender):
@@ -30,8 +30,11 @@ class PercentagePeople(Database):
     @staticmethod
     def calculate_percentage(got, total):
         """Rounding the result"""
-        percentage = 100 * got / total
+        try:
+            percentage = 100 * got / total
+        except ZeroDivisionError as e:
+            raise ValueError from e
         return round(percentage)
 
     def print_percentage_results(self):
-        print(f'Percentage of women: {self.women_percentage()}%, men: {self.men_percentage()}%')
+        print(f'Percentage of women: {self.gender_percentage("female")}%, men: {self.gender_percentage("male")}%')
