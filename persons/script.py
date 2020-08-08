@@ -3,7 +3,7 @@ import os
 
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
-from people import PercentagePeople
+from people import PercentagePeople, AverageAge
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -43,6 +43,9 @@ def create_parser():
     parser.add_argument(
         '-percentage-people', action='store_true', help='shows the percentage of women and men in the database'
     )
+    parser.add_argument(
+        '-average-age', nargs='?', const='all', help='shows the average age of men women or all people in the database',
+        choices=['male', 'female', 'all'])
     return parser
 
 
@@ -68,6 +71,9 @@ def main():
     elif args.percentage_people:
         people = PercentagePeople(DATABASE)
         people.print_percentage_results()
+    elif args.average_age:
+        average = AverageAge(DATABASE, args.average_age)
+        average.print_average_results()
 
 
 if __name__ == '__main__':
