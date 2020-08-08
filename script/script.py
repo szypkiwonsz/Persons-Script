@@ -12,13 +12,23 @@ def database_file_exist(db_path):
     return os.path.exists(db_path)
 
 
+def check_if_arguments(args):
+    if not any(vars(args).values()) and not any(vars(args).values()) == '0':
+        return False
+    else:
+        return True
+
+
 def get_api_url(number_of_people):
     return f'https://randomuser.me/api/?results={number_of_people}'
 
 
 def load_data_api_check_argument(x):
-    x = int(x)
-    if 0 > x <= 5000:
+    try:
+        x = int(x)
+    except Exception:
+        raise argparse.ArgumentTypeError('Argument has to be an int from 1 to 5000')
+    if x <= 0 or x > 5000:
         raise argparse.ArgumentTypeError('Argument has to be an int from 1 to 5000')
     return x
 
@@ -43,7 +53,7 @@ def main():
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
 
-    if not any(vars(args).values()):
+    if not check_if_arguments(args):
         print('There are no arguments passed!')
     elif args.load_data_api:
         api_url = get_api_url(args.load_data_api)
