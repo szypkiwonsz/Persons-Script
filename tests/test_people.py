@@ -2,36 +2,55 @@ import pytest
 
 from data_getter import DataFromFile
 from data_loader import DataLoader
-from people import PercentagePeople
+from people import PercentagePeople, AverageAge
 
 
 @pytest.fixture(scope='module')
-def people():
-    people = PercentagePeople(':memory:')
+def percentage():
+    percentage = PercentagePeople(':memory:')
     file = DataFromFile('./persons.json')
     data = file.get_persons_data()
     loader = DataLoader(':memory:', data)
     loader.insert_to_database()
-    yield people
+    yield percentage
     loader.db.close()
-    people.db.close()
 
 
-def test_gender_percentage(people):
-    assert people.gender_percentage('female') == 50
-    assert people.gender_percentage('male') == 50
+@pytest.fixture(scope='module')
+def average():
+    average = AverageAge(':memory:', '')
+    file = DataFromFile('./persons.json')
+    data = file.get_persons_data()
+    loader = DataLoader(':memory:', data)
+    loader.insert_to_database()
+    yield average
+    loader.db.close()
 
 
-def test_count_only_gender(people):
-    assert people.count_only_gender('male') == 502
-    assert people.count_only_gender('female') == 498
+def test_gender_percentage(percentage):
+    assert percentage.gender_percentage('female') == 50
+    assert percentage.gender_percentage('male') == 50
 
 
-def test_count_all_people(people):
-    assert people.count_all_people() == 1000
-
-
-def test_calculate_percentage(people):
-    assert people.calculate_percentage(2, 10) == 20
+def test_calculate_percentage(percentage):
+    assert percentage.calculate_percentage(2, 10) == 20
     with pytest.raises(ValueError):
-        people.calculate_percentage(0, 0)
+        percentage.calculate_percentage(0, 0)
+
+
+def test_get_only_gender_age(average):
+    assert average.get_only_gender_age('male') == 24450
+    assert average.get_only_gender_age('female') == 24658
+
+
+def test_get_all_people_age(average):
+    assert average.get_all_people_age() == 49108
+
+
+def test_calculate_average_gender(average):
+    assert average.calculate_average_gender('male') == 49
+    assert average.calculate_average_gender('female') == 50
+
+
+def test_calculate_all_people_average(average):
+    assert average.calculate_all_people_average() == 49
