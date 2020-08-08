@@ -36,9 +36,9 @@ def test_add_days_to_birthday_to_data(loader):
 #         assert days_to_birthday == correctly_day
 
 
-def test_day_not_exist(loader):
-    assert loader.day_not_exist(1996, 2, 29) is None
-    assert loader.day_not_exist(2021, 2, 29) == True
+# def test_day_not_exist(loader):
+#     assert loader.day_not_exist(1996, 2, 29) is None
+#     assert loader.day_not_exist(2021, 2, 29) == True
 
 
 def test_add_cleaned_phone_number_to_data(loader):
