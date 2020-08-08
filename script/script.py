@@ -19,7 +19,7 @@ def get_api_url(number_of_people):
 def load_data_api_check_argument(x):
     x = int(x)
     if 0 > x <= 5000:
-        raise argparse.ArgumentTypeError('Argument has to be an int from 0 to 5000')
+        raise argparse.ArgumentTypeError('Argument has to be an int from 1 to 5000')
     return x
 
 
