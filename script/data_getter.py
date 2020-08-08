@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 import requests
@@ -14,7 +15,8 @@ class DataFromFile:
         self.file_path = file_path
 
     def get_json_data(self):
-        with open(self.file_path, encoding='utf8') as json_file:
+        # Added os functions to handle the tests properly
+        with open(os.path.join(os.path.dirname(__file__), self.file_path), encoding='utf8') as json_file:
             data = json.load(json_file)
         return data
 
