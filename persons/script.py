@@ -37,7 +37,7 @@ def load_data_api_check_argument(x):
 def create_parser():
     parser = argparse.ArgumentParser(description='Human data operations')
     parser.add_argument(
-        '-load-data-api', help='inserts data from API to the database. You have to specify number of people to add as '
+        '-load-data-api', help='inserts data from API to the database, you have to specify number of people to add as '
                                'an argument (from 1 to 5000)', metavar='N', type=load_data_api_check_argument
     )
     parser.add_argument(
