@@ -1,9 +1,10 @@
 import argparse
 import os
 
+import models
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
-from people import PercentagePeople, AverageAge
+from people import PercentagePeople, AverageAge, MostCommonValue
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -34,6 +35,16 @@ def load_data_api_check_argument(x):
     return x
 
 
+def most_common_check_argument(x):
+    try:
+        x = int(x)
+    except Exception:
+        raise argparse.ArgumentTypeError('Argument has to be an int greater than 0')
+    if x <= 0:
+        raise argparse.ArgumentTypeError('Argument has to be an int greater than 0')
+    return x
+
+
 def create_parser():
     parser = argparse.ArgumentParser(description='Human data operations')
     parser.add_argument(
@@ -45,7 +56,16 @@ def create_parser():
     )
     parser.add_argument(
         '-average-age', nargs='?', const='all', help='shows the average age of men women or all people in the database',
-        choices=['male', 'female', 'all'])
+        choices=['male', 'female', 'all']
+    )
+    parser.add_argument(
+        '-most-common-city', help='shows the most common city in the database, you have to specify number of values to '
+                                  'show (greater than 0)', type=most_common_check_argument, metavar='N'
+    )
+    parser.add_argument(
+        '-most-common-password', help='shows the most common password in the database, you have to specify number of '
+                                      'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
+    )
     return parser
 
 
@@ -74,6 +94,12 @@ def main():
     elif args.average_age:
         average = AverageAge(DATABASE, args.average_age)
         average.print_average_results()
+    elif args.most_common_city:
+        city = MostCommonValue(DATABASE, args.most_common_city, models.Location, models.Location.city)
+        city.print_most_common_values()
+    elif args.most_common_password:
+        password = MostCommonValue(DATABASE, args.most_common_password, models.Login, models.Login.password)
+        password.print_most_common_values()
 
 
 if __name__ == '__main__':

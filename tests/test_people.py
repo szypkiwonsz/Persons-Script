@@ -1,8 +1,9 @@
 import pytest
 
+import models
 from data_getter import DataFromFile
 from data_loader import DataLoader
-from people import PercentagePeople, AverageAge
+from people import PercentagePeople, AverageAge, MostCommonValue
 
 
 @pytest.fixture(scope='module')
@@ -24,6 +25,28 @@ def average():
     loader = DataLoader(':memory:', data)
     loader.insert_to_database()
     yield average
+    loader.db.close()
+
+
+@pytest.fixture(scope='module')
+def most_common_city():
+    city = MostCommonValue(':memory:', 5, models.Location, models.Location.city)
+    file = DataFromFile('./persons.json')
+    data = file.get_persons_data()
+    loader = DataLoader(':memory:', data)
+    loader.insert_to_database()
+    yield city
+    loader.db.close()
+
+
+@pytest.fixture(scope='module')
+def most_common_password():
+    password = MostCommonValue(':memory:', 5, models.Login, models.Login.password)
+    file = DataFromFile('./persons.json')
+    data = file.get_persons_data()
+    loader = DataLoader(':memory:', data)
+    loader.insert_to_database()
+    yield password
     loader.db.close()
 
 
@@ -54,3 +77,21 @@ def test_calculate_average_gender(average):
 
 def test_calculate_all_people_average(average):
     assert average.calculate_all_people_average() == 49
+
+
+def test_select_most_common_values_city(most_common_city):
+    values = most_common_city.select_most_common_values()
+    names = ['Gisborne', 'Lower Hutt', 'Napier', 'Queanbeyan', 'Van']
+    counted = [7, 5, 5, 5, 5]
+    for i, value in enumerate(values):
+        assert value.name == names[i]
+        assert value.counted == counted[i]
+
+
+def test_select_most_common_values_password(most_common_password):
+    values = most_common_password.select_most_common_values()
+    names = ['achtung', 'surf', '1030', '1223', '1228']
+    counted = [3, 3, 2, 2, 2]
+    for i, value in enumerate(values):
+        assert value.name == names[i]
+        assert value.counted == counted[i]
