@@ -3,6 +3,7 @@ import os
 
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
+from people import PercentagePeople
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -36,8 +37,11 @@ def load_data_api_check_argument(x):
 def create_parser():
     parser = argparse.ArgumentParser(description='Human data operations')
     parser.add_argument(
-        '-load-data-api', help='inserts data from API to the database. You have to specify number of people to add as '
+        '-load-data-api', help='inserts data from API to the database, you have to specify number of people to add as '
                                'an argument (from 1 to 5000)', metavar='N', type=load_data_api_check_argument
+    )
+    parser.add_argument(
+        '-percentage-people', action='store_true', help='shows the percentage of women and men in the database'
     )
     return parser
 
@@ -61,6 +65,9 @@ def main():
         persons_data = api.get_persons_data()
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
+    elif args.percentage_people:
+        people = PercentagePeople(DATABASE)
+        people.print_percentage_results()
 
 
 if __name__ == '__main__':
