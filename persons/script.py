@@ -62,6 +62,10 @@ def create_parser():
         '-most-common-city', help='shows the most common city in the database, you have to specify number of values to '
                                   'show (greater than 0)', type=most_common_check_argument, metavar='N'
     )
+    parser.add_argument(
+        '-most-common-password', help='shows the most common password in the database, you have to specify number of '
+                                      'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
+    )
     return parser
 
 
@@ -93,6 +97,9 @@ def main():
     elif args.most_common_city:
         city = MostCommonValue(DATABASE, args.most_common_city, models.Location, models.Location.city)
         city.print_most_common_values()
+    elif args.most_common_password:
+        password = MostCommonValue(DATABASE, args.most_common_password, models.Login, models.Login.password)
+        password.print_most_common_values()
 
 
 if __name__ == '__main__':
