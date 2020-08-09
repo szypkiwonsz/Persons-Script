@@ -18,6 +18,10 @@ Type: git clone https://github.com/szypkiwonsz/persons-script.git
 ```
 
 ### Prerequisites
+Python Version
+```
+3.8+
+```
 
 Libraries and Packages
 ```
