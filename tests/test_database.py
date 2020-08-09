@@ -3,7 +3,7 @@ import models
 
 def test_existing_tables(database):
     tables = [
-        'coordinates', 'dob', 'id', 'location', 'login', 'name', 'person', 'picture', 'registered', 'street', 'timezone'
+        'coordinates', 'dob', 'id', 'location', 'login', 'name', 'person', 'registered', 'street', 'timezone'
     ]
     assert database.db.get_tables() == tables
     return tables
