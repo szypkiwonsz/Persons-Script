@@ -6,6 +6,7 @@ import models
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
 from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter, MostPointedValue
+from utils import get_persons_data
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -68,12 +69,13 @@ def create_parser():
         choices=['male', 'female', 'all']
     )
     parser.add_argument(
-        '-most-common-city', help='shows the most common city in the database, you have to specify number of values to '
-                                  'show (greater than 0)', type=most_common_check_argument, metavar='N'
+        '-most-common-city', help='shows the most common city/cities in the database, you have to specify number of '
+                                  'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
     )
     parser.add_argument(
-        '-most-common-password', help='shows the most common password in the database, you have to specify number of '
-                                      'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
+        '-most-common-password', help='shows the most common password/passwords in the database, you have to specify '
+                                      'number of values to show (greater than 0)', type=most_common_check_argument,
+        metavar='N'
     )
     parser.add_argument(
         '-range-dob', nargs=2, help='shows people born between the dates given as a parameter', type=dob_check_argument,
@@ -90,7 +92,8 @@ def main():
     # If the database has not been created before, create it and insert the data from the json file
     if not database_file_exist(DATABASE):
         file = DataFromFile(FILE)
-        persons_data = file.get_persons_data()
+        data = file.get_json_data()
+        persons_data = get_persons_data(data)
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
 
@@ -99,7 +102,8 @@ def main():
     elif args.load_data_api:
         api_url = get_api_url(args.load_data_api)
         api = DataFromApi(api_url)
-        persons_data = api.get_persons_data()
+        data = api.get_json_data_from_api()
+        persons_data = get_persons_data(data)
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
     elif args.percentage_people:

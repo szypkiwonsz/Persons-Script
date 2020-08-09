@@ -37,3 +37,7 @@ def calculate_days_to_birthday(date_of_birth):
         delta = delta2
     days = (delta - today).days
     return days
+
+
+def get_persons_data(data):
+    return data['results']

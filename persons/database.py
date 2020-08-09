@@ -18,9 +18,10 @@ class Database:
         self.models = models.MODELS
         self.migrator = SqliteMigrator(self.db)
         self.initialize()
-        self.update_days_to_birthday()
+        self.drop_table(models.Picture)
 
     def __del__(self):
+        self.update_days_to_birthday()
         self.close_connection()
 
     def initialize(self):
@@ -40,6 +41,9 @@ class Database:
     def create_tables(self):
         self.db.create_tables(self.models)
 
+    def get_table_names(self):
+        return self.db.get_tables()
+
     @staticmethod
     def drop_table(database_model):
         database_model.drop_table()
@@ -58,11 +62,11 @@ class Database:
                 return True
         return False
 
-    @staticmethod
-    def update_days_to_birthday():
+    def update_days_to_birthday(self):
         # Each time we run the script, the days to a person's birthday are updated
-        query = models.Dob.select()
-        for person in query:
-            date_of_birth = datetime.strptime(person.date, "%Y-%m-%dT%H:%M:%S.%f%z").date()
-            days = calculate_days_to_birthday(date_of_birth)
-            models.db.execute_sql(f'UPDATE DOB SET days_to_birthday = {days} WHERE ID = {person.id}')
+        if 'dob' in self.get_table_names():
+            query = models.Dob.select()
+            for person in query:
+                date_of_birth = datetime.strptime(person.date, "%Y-%m-%dT%H:%M:%S.%f%z").date()
+                days = calculate_days_to_birthday(date_of_birth)
+                models.db.execute_sql(f'UPDATE DOB SET days_to_birthday = {days} WHERE ID = {person.id}')

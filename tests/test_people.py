@@ -1,76 +1,5 @@
 import pytest
 
-import models
-from data_getter import DataFromFile
-from data_loader import DataLoader
-from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter, MostPointedValue
-
-
-@pytest.fixture(scope='module')
-def percentage():
-    percentage = PercentagePeople(':memory:')
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield percentage
-    loader.db.close()
-
-
-@pytest.fixture(scope='module')
-def average():
-    average = AverageAge(':memory:', '')
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield average
-    loader.db.close()
-
-
-@pytest.fixture(scope='module')
-def most_common_city():
-    city = MostCommonValue(':memory:', 5, models.Location, models.Location.city)
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield city
-    loader.db.close()
-
-
-@pytest.fixture(scope='module')
-def most_common_password():
-    password = MostCommonValue(':memory:', 5, models.Login, models.Login.password)
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield password
-    loader.db.close()
-
-
-@pytest.fixture(scope='module')
-def range_dob():
-    range_dob = RangeValueParameter(':memory:', '1950-08-02', '1950-12-02', models.Dob, models.Dob.date)
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield range_dob
-    loader.db.close()
-
-
-@pytest.fixture(scope='module')
-def safest_password():
-    safest_password = MostPointedValue(':memory:', models.Login, models.Login.password)
-    file = DataFromFile('./persons.json')
-    data = file.get_persons_data()
-    loader = DataLoader(':memory:', data)
-    loader.insert_to_database()
-    yield safest_password
-    loader.db.close()
-
 
 def test_gender_percentage(percentage):
     assert percentage.gender_percentage('female') == 50
@@ -128,26 +57,28 @@ def test_select_values_in_range(range_dob):
         assert name.last == last_names[i]
 
 
-# def test_get_all_values_as_list(safest_password):
-#     pass
+def test_get_all_values_as_list(safest_password):
+    values_list = safest_password.get_all_values_as_list()
+    assert values_list[0] == 'r2d2'
+    assert values_list[1] == '0101'
 
 
 def test_check_lowercase(safest_password):
-    assert safest_password.check_lowercase('lower') == True
+    assert safest_password.check_lowercase('lower') is True
     assert safest_password.check_lowercase('UPPER') is None
-    assert safest_password.check_lowercase('Capital') == True
+    assert safest_password.check_lowercase('Capital') is True
 
 
 def test_check_uppercase(safest_password):
     assert safest_password.check_uppercase('lower') is None
-    assert safest_password.check_uppercase('UPPER') == True
-    assert safest_password.check_uppercase('Capital') == True
+    assert safest_password.check_uppercase('UPPER') is True
+    assert safest_password.check_uppercase('Capital') is True
 
 
 def test_check_length(safest_password):
-    assert safest_password.check_length('lower', 3) == True
+    assert safest_password.check_length('lower', 3) is True
     assert safest_password.check_length('UPPER', 8) is None
-    assert safest_password.check_length('Capital', 7) == True
+    assert safest_password.check_length('Capital', 7) is True
 
 
 def test_check_special_character(safest_password):
