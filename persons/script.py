@@ -6,6 +6,7 @@ import models
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
 from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter, MostPointedValue
+from utils import get_persons_data
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -91,7 +92,8 @@ def main():
     # If the database has not been created before, create it and insert the data from the json file
     if not database_file_exist(DATABASE):
         file = DataFromFile(FILE)
-        persons_data = file.get_persons_data()
+        data = file.get_json_data()
+        persons_data = get_persons_data(data)
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
 
@@ -100,7 +102,8 @@ def main():
     elif args.load_data_api:
         api_url = get_api_url(args.load_data_api)
         api = DataFromApi(api_url)
-        persons_data = api.get_persons_data()
+        data = api.get_json_data_from_api()
+        persons_data = get_persons_data(data)
         loader = DataLoader(DATABASE, persons_data)
         loader.insert_to_database()
     elif args.percentage_people:
