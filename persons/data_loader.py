@@ -12,7 +12,6 @@ class DataLoader(Database):
         Adds the field 'days_to_birthday' to the 'dob' table in the database
         Adds the days until the person's birthday to the given data
         Adds the cleaned up person's phone number to the given data
-        Deletes 'picture' table
 
         :param db_path: <string>, database path
         :param data: <list>, data to be inserted into the database
@@ -22,11 +21,6 @@ class DataLoader(Database):
         self.add_database_field(models.Dob, 'dob', 'days_to_birthday', models.IntegerField(null=True))
         self.add_days_to_birthday_to_data()
         self.add_cleaned_phone_number_to_data()
-        self.drop_table(models.Picture)
-
-    def __del__(self):
-        # Added due to not adding value in field 'days_to_birthday' after uploading data the second and next time
-        self.update_days_to_birthday()
 
     def add_days_to_birthday_to_data(self):
         new_list = []
