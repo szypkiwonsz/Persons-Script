@@ -68,12 +68,13 @@ def create_parser():
         choices=['male', 'female', 'all']
     )
     parser.add_argument(
-        '-most-common-city', help='shows the most common city in the database, you have to specify number of values to '
-                                  'show (greater than 0)', type=most_common_check_argument, metavar='N'
+        '-most-common-city', help='shows the most common city/cities in the database, you have to specify number of '
+                                  'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
     )
     parser.add_argument(
-        '-most-common-password', help='shows the most common password in the database, you have to specify number of '
-                                      'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
+        '-most-common-password', help='shows the most common password/passwords in the database, you have to specify '
+                                      'number of values to show (greater than 0)', type=most_common_check_argument,
+        metavar='N'
     )
     parser.add_argument(
         '-range-dob', nargs=2, help='shows people born between the dates given as a parameter', type=dob_check_argument,
