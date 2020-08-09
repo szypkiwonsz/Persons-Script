@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 import models
 from database import Database
 from utils import count_all_people, count_only_gender
@@ -143,3 +145,72 @@ class RangeValueParameter(Database):
     def print_results(self):
         for name in self.select_values_in_range():
             print(f'{name.first} {name.last}')
+
+
+class MostPointedValue(Database):
+    def __init__(self, db_path, model, column):
+        """
+        Object that returns the value of the selected column with the most points
+
+        :param db_path: <string>, database path
+        :param model: <peewee.ModelBase>, e.g. ---> models.Login
+        :param column: <peewee.CharField>, e.g. ---> models.Login.password
+        """
+        super().__init__(db_path)
+        self.model = model
+        self.column = column
+
+    def get_all_values_as_list(self):
+        query = self.model.select(self.column.alias('value'))
+        return [data.value for data in query]
+
+    @staticmethod
+    def check_lowercase(value):
+        if any(c.islower() for c in value):
+            return True
+
+    @staticmethod
+    def check_uppercase(value):
+        if any(c.isupper() for c in value):
+            return True
+
+    @staticmethod
+    def check_length(value, length):
+        if len(value) >= length:
+            return True
+
+    @staticmethod
+    def check_special_character(value):
+        sum_special_characters = 0
+        for c in value:
+            if not c.isalnum():
+                sum_special_characters += 1
+        return sum_special_characters
+
+    def rate_values(self, values):
+        new_list_values = []
+        for value in values:
+            points = 0
+            if self.check_lowercase(value):
+                points += 1
+            if self.check_uppercase(value):
+                points += 2
+            if self.check_length(value, 8):
+                points += 5
+            if self.check_special_character(value):
+                sum_special_characters = self.check_special_character(value)
+                points += 3 * sum_special_characters
+            new_list_values.append((value, points))
+        return new_list_values
+
+    def most_rated_value(self):
+        all_values_list = self.get_all_values_as_list()
+        results = self.rate_values(all_values_list)
+        try:
+            result = max(results, key=itemgetter(1))
+        except ValueError:
+            print('No data in the database.')
+        else:
+            value, points = result
+            print(f'{value}, {points}')
+            return result

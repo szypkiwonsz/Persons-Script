@@ -5,7 +5,7 @@ from datetime import datetime
 import models
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
-from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter
+from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter, MostPointedValue
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -76,8 +76,10 @@ def create_parser():
                                       'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
     )
     parser.add_argument(
-        '-range-dob', nargs=2, help='Shows the percentage of women and men', type=dob_check_argument
+        '-range-dob', nargs=2, help='shows people born between the dates given as a parameter', type=dob_check_argument,
+        metavar='YYYY-MM-DD'
     )
+    parser.add_argument('-safest-password', action='store_true', help='shows the password with the most points')
     return parser
 
 
@@ -115,6 +117,9 @@ def main():
     elif args.range_dob:
         date = RangeValueParameter(DATABASE, args.range_dob[0], args.range_dob[1], models.Dob, models.Dob.date)
         date.print_results()
+    elif args.safest_password:
+        password = MostPointedValue(DATABASE, models.Login, models.Login.password)
+        password.most_rated_value()
 
 
 if __name__ == '__main__':
