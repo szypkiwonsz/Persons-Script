@@ -5,7 +5,6 @@ from peewee import *
 db = SqliteDatabase(None, pragmas={
     'journal_mode': 'wal',
     'synchronous': 0,
-    'locking_mode': 'EXCLUSIVE'
 })
 
 
