@@ -1,10 +1,11 @@
 import argparse
 import os
+from datetime import datetime
 
 import models
 from data_getter import DataFromFile, DataFromApi
 from data_loader import DataLoader
-from people import PercentagePeople, AverageAge, MostCommonValue
+from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter
 
 DATABASE = 'persons.db'
 FILE = 'persons.json'
@@ -45,6 +46,14 @@ def most_common_check_argument(x):
     return x
 
 
+def dob_check_argument(x):
+    try:
+        x = datetime.strptime(x, '%Y-%m-%d')
+    except Exception:
+        raise argparse.ArgumentTypeError('Argument has to be an string in format YYYY-MM-DD')
+    return x
+
+
 def create_parser():
     parser = argparse.ArgumentParser(description='Human data operations')
     parser.add_argument(
@@ -65,6 +74,9 @@ def create_parser():
     parser.add_argument(
         '-most-common-password', help='shows the most common password in the database, you have to specify number of '
                                       'values to show (greater than 0)', type=most_common_check_argument, metavar='N'
+    )
+    parser.add_argument(
+        '-range-dob', nargs=2, help='Shows the percentage of women and men', type=dob_check_argument
     )
     return parser
 
@@ -100,6 +112,9 @@ def main():
     elif args.most_common_password:
         password = MostCommonValue(DATABASE, args.most_common_password, models.Login, models.Login.password)
         password.print_most_common_values()
+    elif args.range_dob:
+        date = RangeValueParameter(DATABASE, args.range_dob[0], args.range_dob[1], models.Dob, models.Dob.date)
+        date.print_results()
 
 
 if __name__ == '__main__':

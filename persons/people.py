@@ -112,3 +112,34 @@ class MostCommonValue(Database):
     def print_most_common_values(self):
         for value in self.select_most_common_values():
             print(f'{value.name}, {value.counted}')
+
+
+class RangeValueParameter(Database):
+    def __init__(self, db_path, first_parameter, second_parameter, model, column):
+        """
+        Object returning people who fall within the range of values ​​of the given parameters, of the selected column
+
+        :param db_path: <string>, database path
+        :param first_parameter: <string>, first entered parameter
+        :param second_parameter: <string>, second entered parameter
+        :param model: <peewee.ModelBase>, e.g. ---> models.Dob
+        :param column: <peewee.CharField>, e.g. ---> models.Dob.date
+        """
+        super().__init__(db_path)
+        self.first_parameter = first_parameter
+        self.second_parameter = second_parameter
+        self.model = model
+        self.column = column
+
+    def select_values_in_range(self):
+        query = models.Name.select(
+            models.Person, self.column, models.Name).join(
+            models.Person).join(
+            self.model).where(
+            (self.first_parameter < self.column) & (self.column < self.second_parameter)
+        )
+        return query
+
+    def print_results(self):
+        for name in self.select_values_in_range():
+            print(f'{name.first} {name.last}')
