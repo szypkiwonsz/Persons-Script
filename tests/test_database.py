@@ -1,14 +1,4 @@
-import pytest
-
 import models
-from database import Database
-
-
-@pytest.fixture()
-def database():
-    database = Database(':memory:')
-    yield database
-    database.db.close()
 
 
 def test_existing_tables(database):
@@ -40,19 +30,19 @@ def test_existing_columns(database):
 
 
 def test_connection(database):
-    assert database.db.is_closed() == False
+    assert database.db.is_closed() is False
 
 
 def test_close_connection(database):
     database.close_connection()
-    assert database.db.is_closed() == True
+    assert database.db.is_closed() is True
 
 
 def test_reopen_connection(database):
     database.close_connection()
-    assert database.db.is_closed() == True
+    assert database.db.is_closed() is True
     database.open_connection()
-    assert database.db.is_closed() == False
+    assert database.db.is_closed() is False
 
 
 def test_drop_table(database):
@@ -62,10 +52,10 @@ def test_drop_table(database):
 
 def test_add_database_field(database):
     database.add_database_field(models.Registered, 'registered', 'new_field', models.CharField(null=True))
-    assert database.check_if_column_exist('registered', 'new_field') == True
-    assert database.check_if_column_exist('not_existing_table', 'not_existing_column') == False
+    assert database.check_if_column_exist('registered', 'new_field') is True
+    assert database.check_if_column_exist('not_existing_table', 'not_existing_column') is False
 
 
 def test_check_if_column_exist(database):
-    assert database.check_if_column_exist('person', 'gender') == True
-    assert database.check_if_column_exist('test', 'test') == False
+    assert database.check_if_column_exist('person', 'gender') is True
+    assert database.check_if_column_exist('test', 'test') is False
