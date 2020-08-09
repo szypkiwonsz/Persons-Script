@@ -204,8 +204,8 @@ class MostPointedValue(Database):
         return new_list_values
 
     def most_rated_value(self):
-        all_values_list = self.get_all_values_as_list()
-        results = self.rate_values(all_values_list)
+        all_values = self.get_all_values_as_list()
+        results = self.rate_values(all_values)
         try:
             result = max(results, key=itemgetter(1))
         except ValueError:
