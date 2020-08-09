@@ -20,10 +20,6 @@ class DataFromFile:
             data = json.load(json_file)
         return data
 
-    def get_persons_data(self):
-        data = self.get_json_data()
-        return data['results']
-
 
 class DataFromApi:
     def __init__(self, api_url):
@@ -47,7 +43,3 @@ class DataFromApi:
             print('Oops! Connection Error. Make sure you are connected to Internet.')
             sys.exit()
         return response.json()
-
-    def get_persons_data(self):
-        data = self.get_json_data_from_api()
-        return data['results']
