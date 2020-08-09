@@ -24,6 +24,10 @@ class DataLoader(Database):
         self.add_cleaned_phone_number_to_data()
         self.drop_table(models.Picture)
 
+    def __del__(self):
+        # Added due to not adding value in field 'days_to_birthday' after uploading data the second and next time
+        self.update_days_to_birthday()
+
     def add_days_to_birthday_to_data(self):
         new_list = []
         for person in self.data:
