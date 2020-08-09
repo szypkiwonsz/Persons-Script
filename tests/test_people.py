@@ -3,7 +3,7 @@ import pytest
 import models
 from data_getter import DataFromFile
 from data_loader import DataLoader
-from people import PercentagePeople, AverageAge, MostCommonValue
+from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter
 
 
 @pytest.fixture(scope='module')
@@ -47,6 +47,17 @@ def most_common_password():
     loader = DataLoader(':memory:', data)
     loader.insert_to_database()
     yield password
+    loader.db.close()
+
+
+@pytest.fixture(scope='module')
+def range_dob():
+    range_dob = RangeValueParameter(':memory:', '1950-08-02', '1950-12-02', models.Dob, models.Dob.date)
+    file = DataFromFile('./persons.json')
+    data = file.get_persons_data()
+    loader = DataLoader(':memory:', data)
+    loader.insert_to_database()
+    yield range_dob
     loader.db.close()
 
 
@@ -95,3 +106,12 @@ def test_select_most_common_values_password(most_common_password):
     for i, value in enumerate(values):
         assert value.name == names[i]
         assert value.counted == counted[i]
+
+
+def test_select_values_in_range(range_dob):
+    names = range_dob.select_values_in_range()
+    first_names = ['Laura', 'Douglas', 'Eliott', 'Tristan', 'Josefina', 'Kasimir']
+    last_names = ['Cook', 'Gregory', 'Girard', 'Nielsen', 'Soto', 'Bücker']
+    for i, name in enumerate(names):
+        assert name.first == first_names[i]
+        assert name.last == last_names[i]
