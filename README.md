@@ -1,4 +1,4 @@
-# persons-script
+# Persons-Script
 
 A script created in Python that automatically uploads human data from a file to a database. Using commands we operate on 
 data in the database (list of available commands below). It also allows you to add more people data using the API.
@@ -25,7 +25,7 @@ Python Version
 
 Libraries and Packages
 ```
-Open terminal with choosen folder "persons-script>"
+Open terminal with choosen folder "Persons-Script>"
 ```
 
 ```
@@ -99,7 +99,7 @@ Download or clone project
 Install requirements
 ```
 ```
-Open terminal with choosen folder "persons-script\persons>"
+Open terminal with choosen folder "Persons-Script\persons>"
 ```
 ```
 Type selected command
@@ -112,7 +112,7 @@ How to run tests
 Do the same as for running the script
 ```
 ```
-Open terminal with choosen folder "persons-script>"
+Open terminal with choosen folder "Persons-Script>"
 ```
 ```
 Type: pytest
