@@ -14,7 +14,7 @@ Clone the repository
 Open a terminal with the selected path where the project should be cloned
 ```
 ```
-Type: git clone https://github.com/szypkiwonsz/persons-script.git
+Type: git clone https://github.com/szypkiwonsz/Persons-Script.git
 ```
 
 ### Prerequisites
