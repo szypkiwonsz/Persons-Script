@@ -32,6 +32,37 @@ Open terminal with choosen folder "Persons-Script>"
 Type: pip install -r requirements.txt
 ```
 ---
+
+### Running
+
+How to run a script
+
+```
+Download or clone project
+```
+```
+Install requirements
+```
+```
+Open terminal with choosen folder "Persons-Script\persons>"
+```
+```
+Type selected command
+```
+---
+### Running tests
+
+How to run tests
+```
+Do the same as for running the script
+```
+```
+Open terminal with choosen folder "Persons-Script>"
+```
+```
+Type: pytest
+```
+---
 ### Avaible commands
 ```
 Each command must be executed in the terminal from a folder "persons-script\persons>"
@@ -86,36 +117,6 @@ Adds the selected number of people to the database
 
 ```
 python script.py -load-data-api N ---> specify number of people to add as N
-```
----
-### Running
-
-How to run a script
-
-```
-Download or clone project
-```
-```
-Install requirements
-```
-```
-Open terminal with choosen folder "Persons-Script\persons>"
-```
-```
-Type selected command
-```
----
-### Running tests
-
-How to run tests
-```
-Do the same as for running the script
-```
-```
-Open terminal with choosen folder "Persons-Script>"
-```
-```
-Type: pytest
 ```
 ---
 ## Built With
