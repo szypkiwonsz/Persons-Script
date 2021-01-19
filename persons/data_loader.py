@@ -21,7 +21,7 @@ class JsonLoader:
         Load specified amount of people from api.
         :param n: <int> -> number of people to be loaded
         """
-        self.data['results'] = (Api.get(f'https://randomuser.me/api/?results={str(n)}')["results"])
+        self.data['results'] = (Api.get(f'https://randomuser.me/api/?results={str(n)}')['results'])
 
     def modify_data(self):
         """Modifies the data in accordance with the program assumptions (removes the photo field, clears the phone
