@@ -1,106 +1,162 @@
-import sys
-
 import pytest
+from peewee import SqliteDatabase
 
-sys.path.append('./persons')
+from persons.data_loader import JsonLoader
+from persons.database import Person, DatabaseHandler
+from persons.password_rater import Password, PasswordRater
+from persons.query_handler import QueryHandler, CommonElementsHandler, CommonCitiesHandler, CommonPasswordsHandler, \
+    GenderHandler, DateHandler, PasswordHandler
 
-import models
-from database import Database
-from data_loader import DataLoader
-from people import PercentagePeople, AverageAge, MostCommonValue, RangeValueParameter, MostPointedValue
-from utils import get_persons_data
-from data_getter import DataFromFile
+
+@pytest.fixture()
+def json_loader():
+    temp_json_loader = JsonLoader()
+    return temp_json_loader
+
+
+@pytest.fixture()
+def persons_data():
+    persons_data = [{
+        "gender": "female",
+        "name": {
+            "title": "Miss",
+            "first": "Louane",
+            "last": "Vidal"
+        },
+        "location": {
+            "street": {
+                "number": 2479,
+                "name": "Place du 8 Février 1962"
+            },
+            "city": "Avignon",
+            "state": "Vendée",
+            "country": "France",
+            "postcode": 78276,
+            "coordinates": {
+                "latitude": "2.0565",
+                "longitude": "95.2422"
+            },
+            "timezone": {
+                "offset": "+1:00",
+                "description": "Brussels, Copenhagen, Madrid, Paris"
+            }
+        },
+        "email": "louane.vidal@example.com",
+        "login": {
+            "uuid": "9f07341f-c7e6-45b7-bab0-af6de5a4582d",
+            "username": "angryostrich988",
+            "password": "r2d2",
+            "salt": "B5ywSDUM",
+            "md5": "afce5fbe8f32bcec1a918f75617ab654",
+            "sha1": "1a5b1afa1d9913cf491af64ce78946d18fea6b04",
+            "sha256": "0124895aa1e6e5fb0596fad4c413602e0922e8a8c2dc758bbdb3fa070ad25a07"
+        },
+        "dob": {
+            "date": "1966-06-26T11:50:25.558Z",
+            "age": 54
+        },
+        "registered": {
+            "date": "2016-08-11T06:51:52.086Z",
+            "age": 4
+        },
+        "phone": "02-62-35-18-98",
+        "cell": "06-07-80-83-11",
+        "id": {
+            "name": "INSEE",
+            "value": "2NNaN01776236 16"
+        },
+        "picture": {
+            "large": "https://randomuser.me/api/portraits/women/88.jpg",
+            "medium": "https://randomuser.me/api/portraits/med/women/88.jpg",
+            "thumbnail": "https://randomuser.me/api/portraits/thumb/women/88.jpg"
+        },
+        "nat": "FR"
+    }]
+    return persons_data
+
+
+@pytest.fixture()
+def json_loader_with_data(persons_data):
+    temp_json_loader = JsonLoader()
+    temp_json_loader.data['results'] = persons_data
+    return temp_json_loader
 
 
 @pytest.fixture()
 def database():
-    database = Database(':memory:')
-    yield database
-    database.db.close()
+    test_db = SqliteDatabase(':memory:')
+    test_db.bind([Person], bind_refs=False, bind_backrefs=False)
+    return test_db
 
 
 @pytest.fixture()
-def loader():
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    return loader
+def database_handler(database):
+    temp_database_handler = DatabaseHandler()
+    temp_database_handler.db = database
+    return temp_database_handler
 
 
 @pytest.fixture()
-def file():
-    file = DataFromFile('./persons.json')
-    return file
+def database_with_data(database_handler, json_loader_with_modified_data):
+    database_handler.insert_data_into_person(json_loader_with_modified_data.data['results'])
+    return database_handler
 
 
-@pytest.fixture(scope='module')
-def percentage():
-    percentage = PercentagePeople(':memory:')
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield percentage
-    loader.db.close()
+@pytest.fixture()
+def json_loader_with_modified_data(json_loader_with_data):
+    json_loader_with_data.modify_data()
+    return json_loader_with_data
 
 
-@pytest.fixture(scope='module')
-def average():
-    average = AverageAge(':memory:', '')
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield average
-    loader.db.close()
+@pytest.fixture()
+def password():
+    password = Password('Qwertyu1?')
+    return password
 
 
-@pytest.fixture(scope='module')
-def most_common_city():
-    city = MostCommonValue(':memory:', 5, models.Location, models.Location.city)
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield city
-    loader.db.close()
+@pytest.fixture()
+def password_rater():
+    temp_password_rater = PasswordRater('Qwertyu1?')
+    return temp_password_rater
 
 
-@pytest.fixture(scope='module')
-def most_common_password():
-    password = MostCommonValue(':memory:', 5, models.Login, models.Login.password)
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield password
-    loader.db.close()
+@pytest.fixture()
+def query_handler():
+    temp_query_handler = QueryHandler()
+    return temp_query_handler
 
 
-@pytest.fixture(scope='module')
-def range_dob():
-    range_dob = RangeValueParameter(':memory:', '1950-08-02', '1950-12-02', models.Dob, models.Dob.date)
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield range_dob
-    loader.db.close()
+@pytest.fixture()
+def common_elements_handler():
+    temp_common_elements_handler = CommonElementsHandler('location', 'country')
+    return temp_common_elements_handler
 
 
-@pytest.fixture(scope='module')
-def safest_password():
-    safest_password = MostPointedValue(':memory:', models.Login, models.Login.password)
-    file = DataFromFile('./persons.json')
-    data = file.get_json_data()
-    persons_data = get_persons_data(data)
-    loader = DataLoader(':memory:', persons_data)
-    loader.insert_to_database()
-    yield safest_password
-    loader.db.close()
+@pytest.fixture()
+def common_cities_handler():
+    temp_common_cities_handler = CommonCitiesHandler()
+    return temp_common_cities_handler
+
+
+@pytest.fixture()
+def common_passwords_handler():
+    temp_common_passwords_handler = CommonPasswordsHandler()
+    return temp_common_passwords_handler
+
+
+@pytest.fixture()
+def gender_handler():
+    temp_gender_handler = GenderHandler()
+    return temp_gender_handler
+
+
+@pytest.fixture()
+def date_handler():
+    temp_date_handler = DateHandler('1900-01-01', '2021-01-01')
+    return temp_date_handler
+
+
+@pytest.fixture()
+def password_handler():
+    temp_password_handler = PasswordHandler()
+    return temp_password_handler
