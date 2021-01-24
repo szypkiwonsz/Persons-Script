@@ -119,15 +119,19 @@ class GenderHandler(QueryHandler):
         :param gender: <string> -> gender of persons
         :return: <int> -> average age of persons in database selected by gender
         """
-        if gender == 'all':
-            return self.calculate_average_age(self.get_all_persons().dicts(), self.get_all_persons().count())
-        return self.calculate_average_age(
-            self.get_persons_by_gender(gender).dicts(), self.get_persons_by_gender(gender).count())
+        try:
+            if gender == 'all':
+                return self.calculate_average_age(self.get_all_persons().dicts(), self.get_all_persons().count())
+            return self.calculate_average_age(
+                self.get_persons_by_gender(gender).dicts(), self.get_persons_by_gender(gender).count())
+        except ValueError:
+            return 0
 
     @staticmethod
     def calculate_average_age(persons, count):
         """
         Calculates average age of persons.
+        :raises: ValueError -> when input data cannot be operated
         :param persons: <pewee.ModelSelect> -> persons objects from database
         :param count: <int> -> sum of persons
         :return: <int> -> average age of persons
@@ -135,7 +139,10 @@ class GenderHandler(QueryHandler):
         temp_sum = 0
         for person in persons:
             temp_sum += int(person['dob']['age'])
-        return temp_sum // count
+        try:
+            return temp_sum // count
+        except ZeroDivisionError as e:
+            raise ValueError('Invalid input data.')
 
 
 class DateHandler(QueryHandler):
