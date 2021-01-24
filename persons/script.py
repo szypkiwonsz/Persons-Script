@@ -1,8 +1,9 @@
 import click
 
-from data_loader import JsonLoader
-from database import DatabaseHandler
-from query_handler import GenderHandler, CommonCitiesHandler, CommonPasswordsHandler, DateHandler, PasswordHandler
+from persons.data_loader import JsonLoader
+from persons.database import DatabaseHandler
+from persons.query_handler import GenderHandler, CommonCitiesHandler, CommonPasswordsHandler, DateHandler, \
+    PasswordHandler
 
 
 @click.group()

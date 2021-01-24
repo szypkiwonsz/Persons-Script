@@ -1,7 +1,7 @@
 import pytest
 from requests import HTTPError
 
-from data_getter import Api
+from persons.data_getter import Api
 
 
 @pytest.mark.api

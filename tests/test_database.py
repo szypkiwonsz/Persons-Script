@@ -1,6 +1,6 @@
 import pytest
 
-from database import Person
+from persons.database import Person
 
 
 @pytest.mark.database
