@@ -2,7 +2,7 @@ import calendar
 import json
 from datetime import datetime
 
-from persons.data_getter import Api
+from data_getter import Api
 
 
 class JsonLoader:
