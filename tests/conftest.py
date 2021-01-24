@@ -1,10 +1,14 @@
+import sys
+
 import pytest
 from peewee import SqliteDatabase
 
-from persons.data_loader import JsonLoader
-from persons.database import Person, DatabaseHandler
-from persons.password_rater import Password, PasswordRater
-from persons.query_handler import QueryHandler, CommonElementsHandler, CommonCitiesHandler, CommonPasswordsHandler, \
+sys.path.append('./persons')
+
+from data_loader import JsonLoader
+from database import Person, DatabaseHandler
+from password_rater import Password, PasswordRater
+from query_handler import QueryHandler, CommonElementsHandler, CommonCitiesHandler, CommonPasswordsHandler, \
     GenderHandler, DateHandler, PasswordHandler
 
 

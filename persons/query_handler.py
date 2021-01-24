@@ -1,6 +1,6 @@
-from persons.database import Person
-from persons.password_rater import Password, PasswordRater
-from persons.utils import string_to_date
+from database import Person
+from password_rater import Password, PasswordRater
+from utils import string_to_date
 
 
 class QueryHandler:
