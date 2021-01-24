@@ -68,55 +68,61 @@ Type: pytest
 Each command must be executed in the terminal from a folder "persons-script\persons>"
 ```
 ---
+Loads persons data from json file to the database
+
+```
+python script.py load-from-file
+```
+---
 Shows the percentage of men and women in the database
 
 ```
-python script.py -percentage-people
+python script.py people-percentage
 ```
 ---
 
 Shows the average age of men women or all people in the database
 
 ```
-python script.py -average-age male ---> shows average age of men
+python script.py average-age male ---> shows average age of men
 ```
 ```
-python script.py -average-age female ---> shows average age of women
+python script.py average-age female ---> shows average age of women
 ```
 ```
-python script.py -average-age ---> shows average age of all people
+python script.py average-age all ---> shows average age of all people
 ```
 ---
 
 Shows the most common city/cities in the database and the number of appearances
 
 ```
-python script.py -most-common-city N ---> specify number of cities to show as N
+python script.py most-common-cities N ---> specify number of cities to show as N
 ```
 ---
 
 Shows the most common password/passwords in the database and the number of appearances
 
 ```
-python script.py -most-common-password N ---> specify number of passwords to show as N
+python script.py most-common-passwords N ---> specify number of passwords to show as N
 ```
 ---
 Shows people born between the dates given as a parameter
 
 ```
-python script.py -range-dob first_date second_date ---> date format: YYYY-MM-DD
+python script.py range-dob first_date second_date ---> date format: YYYY-MM-DD
 ```
 ---
 Shows the password with the most points
 
 ```
-python script.py -safest-password
+python script.py safest-password
 ```
 ---
 Adds the selected number of people to the database
 
 ```
-python script.py -load-data-api N ---> specify number of people to add as N
+python script.py load-from-api N ---> specify number of people to add as N
 ```
 ---
 ## Built With

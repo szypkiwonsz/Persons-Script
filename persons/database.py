@@ -1,72 +1,71 @@
-from datetime import datetime
+import json
 
-from playhouse.migrate import SqliteMigrator, migrate
-
-import models
-from utils import calculate_days_to_birthday
+from peewee import SqliteDatabase, Model, chunked, TextField
 
 
-class Database:
-    def __init__(self, db_path):
-        """
-        Object that initiates database connection
+class DatabaseHandler:
+    """A class that manages the connection to the database, creates tables and enters data."""
+    # database connection by pewee
+    # pragma statements to increase performance of the database
+    db = SqliteDatabase('database.db', pragmas={
+        'journal_mode': 'wal',
+        'synchronous': 0,
+    })
 
-        :param db_path: <string>, database path
-        """
-        self.db_path = db_path
-        self.db = models.db
-        self.models = models.MODELS
-        self.migrator = SqliteMigrator(self.db)
-        self.initialize()
-        self.drop_table(models.Picture)
-
-    def __del__(self):
-        self.update_days_to_birthday()
-        self.close_connection()
-
-    def initialize(self):
-        """
-        Creates the database and the table if they don't exist
-        """
-        self.db.init(self.db_path)
-        self.open_connection()
-        self.create_tables()
-
-    def open_connection(self):
-        self.db.connect()
-
-    def close_connection(self):
-        self.db.close()
-
-    def create_tables(self):
-        self.db.create_tables(self.models)
-
-    def get_table_names(self):
-        return self.db.get_tables()
+    def __init__(self):
+        """It initiates when creating a new object."""
+        self.create_table(Person)
 
     @staticmethod
-    def drop_table(database_model):
-        database_model.drop_table()
+    def create_table(table_class):
+        """Creates table in the database."""
+        table_class.create_table()
 
-    def add_database_field(self, database_model, table_name, column_name, field):
-        # Handling peewee.OperationalError: duplicate column name
-        if not self.check_if_column_exist(table_name, column_name):
-            migrate(self.migrator.add_column(table_name, column_name, field))
-            database_model._meta.add_field(column_name, field)
+    def insert_data_into_person(self, data):
+        """
+        Enters data into the 'person' table.
+        :param data: <list> -> data about persons
+        """
+        self.insert_data(data, Person)
 
-    def check_if_column_exist(self, table_name, column_name):
-        columns_meta_data = self.db.get_columns(table_name)
-        for i, data in enumerate(columns_meta_data):
-            retrieved_column_name = columns_meta_data[i][0]
-            if column_name == retrieved_column_name:
-                return True
-        return False
+    def insert_data(self, data, table_class):
+        """
+        Inserts data into the database.
+        :param data: <list> -> data about persons
+        :param table_class: <peewee.ModelBase> -> class representing the table
+        """
+        with self.db.atomic():
+            for batch in chunked(data, 10):
+                table_class.insert_many(batch).execute()
 
-    def update_days_to_birthday(self):
-        # Each time we run the script, the days to a person's birthday are updated
-        if 'dob' in self.get_table_names():
-            query = models.Dob.select()
-            for person in query:
-                date_of_birth = datetime.strptime(person.date, "%Y-%m-%dT%H:%M:%S.%f%z").date()
-                days = calculate_days_to_birthday(date_of_birth)
-                models.db.execute_sql(f'UPDATE DOB SET days_to_birthday = {days} WHERE ID = {person.id}')
+
+class Person(Model):
+    """Class representing the 'person' table in the database."""
+
+    class MyJsonField(TextField):
+        """Class for translating strings with json format into strings and vice-versa."""
+
+        def db_value(self, value):
+            return json.dumps(value)
+
+        def python_value(self, value):
+            if value is not None:
+                return json.loads(value)
+            return None
+
+    gender = TextField()
+    name = MyJsonField()
+    location = MyJsonField()
+    email = TextField()
+    login = MyJsonField()
+    dob = MyJsonField()
+    dtb = TextField()
+    registered = MyJsonField()
+    phone = TextField()
+    cell = TextField()
+    id = MyJsonField()
+    nat = TextField()
+
+    class Meta:
+        """Meta class for a database connection."""
+        database = DatabaseHandler.db

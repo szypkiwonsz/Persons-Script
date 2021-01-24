@@ -1,12 +1,18 @@
-def test_get_json_data(file):
-    data = file.get_json_data()
-    assert data['results'][0]['cell'] == '06-07-80-83-11'
-    assert data['results'][-1]['email'] == 'tim.bardsen@example.com'
-    return data
+import pytest
+from requests import HTTPError
+
+from persons.data_getter import Api
 
 
-def test_get_persons_data(file):
-    data = test_get_json_data(file)
-    persons_data = data['results']
-    assert persons_data[0]['cell'] == '06-07-80-83-11'
-    assert persons_data[-1]['email'] == 'tim.bardsen@example.com'
+@pytest.mark.api
+def test_get_200(requests_mock):
+    requests_mock.get(f'https://randomuser.me/api/?results={str(1)}', json={'name': 'awesome-mock'})
+    response = Api.get(f'https://randomuser.me/api/?results={str(1)}')
+    assert response == {'name': 'awesome-mock'}
+
+
+@pytest.mark.api
+def test_get_404(requests_mock):
+    requests_mock.get(f'https://randomuser.me/api/?results={str(1)}', status_code=404)
+    with pytest.raises(HTTPError):
+        response = Api.get(f'https://randomuser.me/api/?results={str(1)}')
