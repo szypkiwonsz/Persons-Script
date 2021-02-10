@@ -60,7 +60,7 @@ Do the same as for running the script
 Open terminal with choosen folder "Persons-Script>"
 ```
 ```
-Type: pytest
+Type: pytest -v or pytest-v --cov=persons (to check coverage of tests)
 ```
 ---
 ### Avaible commands
