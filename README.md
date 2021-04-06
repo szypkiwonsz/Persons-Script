@@ -63,7 +63,7 @@ Open terminal with choosen folder "Persons-Script>"
 Type: pytest -v or pytest-v --cov=persons (to check coverage of tests)
 ```
 ---
-### Avaible commands
+### Available commands
 ```
 Each command must be executed in the terminal from a folder "persons-script\persons>"
 ```
