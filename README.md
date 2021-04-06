@@ -65,7 +65,7 @@ Type: pytest -v or pytest-v --cov=persons (to check coverage of tests)
 ---
 ### Available commands
 ```
-Each command must be executed in the terminal from a folder "persons-script\persons>"
+Each command must be executed in the terminal from a folder "Persons-Script\persons>"
 ```
 ---
 Loads persons data from json file to the database
