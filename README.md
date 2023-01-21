@@ -132,7 +132,3 @@ python script.py load-from-api N ---> specify number of people to add as N
 ## Authors
 
 * **Jan Kacper Sawicki** - [szypkiwonsz](https://github.com/szypkiwonsz)
-
-## Acknowledgments
-
-* The script was made as a recruitment task for an internship
